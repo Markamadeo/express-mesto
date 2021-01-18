@@ -9,6 +9,7 @@ cards.get('/cards', (req, res) => {
   fs.readFile(path.join(__dirname, 'data', 'cards.json'), 'utf8', (err, data) => {
     if (err) {
       res.status(500).send({ message: 'К сожалению данные отсутствуют' });
+      return;
     }
     res.send(data);
   });
