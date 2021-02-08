@@ -26,8 +26,7 @@ app.use((req, res, next) => {
 });
 app.use('/', users);
 app.use('/', cards);
-app.use(express.static(path.resolve(__dirname, 'public')));
-app.use('*', pageNotFound);
+app.use('/', pageNotFound);
 
 app.listen(PORT, () => { // eslint-disable-next-line no-console
   console.log(`Server has been started on port ${PORT}...`);
