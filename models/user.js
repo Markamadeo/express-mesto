@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -19,11 +19,12 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator(avatar) {
         // eslint-disable-next-line no-useless-escape
-        return /^(https?:\/\/)?([\w\.]+)\.([a-z]{2,6}\.?)(\/[\w\.]*)*\/?\#?$/.test(avatar);
+        return /^(https?:\/\/)?([\w\.]+)\.([a-z]{2,6}\.?)(\/[\w\W]*)*\/?$/.test(avatar);
       },
       message: 'С вашей ссылкой что-то не так...',
     },
   },
 });
 
-module.exports = mongoose.model('user', userSchema);
+const User = mongoose.model('user', userSchema);
+export default User;
