@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -13,25 +13,26 @@ const cardSchema = new mongoose.Schema({
     validate: {
       validator(link) {
         // eslint-disable-next-line no-useless-escape
-        return /^(https?:\/\/)?([\w\.]+)\.([a-z]{2,6}\.?)(\/[\w\.]*)*\/?\#?$/.test(link);
+        return /^(https?:\/\/)?([\w\.]+)\.([a-z]{2,6}\.?)(\/[\w\W]*)*\/?$/.test(link);
       },
       message: 'С вашей ссылкой что-то не так...',
     },
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
-      required: true,
-    },
-    likes: {
-      type: [mongoose.Schema.Types.ObjectId],
-      required: true,
-      default: [],
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    required: true,
+  },
+  likes: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: true,
+    default: [],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-module.exports = mongoose.model('card', cardSchema);
+const Card = mongoose.model('card', cardSchema);
+export default Card;

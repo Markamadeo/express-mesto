@@ -1,18 +1,11 @@
 import express from 'express';
-import fs from 'fs';
-import path from 'path';
 
-const __dirname = path.resolve();
+import { getCards, postCard, deleteCard } from '../controllers/cards.js';
+
 export const cards = express.Router();
 
-cards.get('/cards', (req, res) => {
-  fs.readFile(path.join(__dirname, 'data', 'cards.json'), 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).send({ message: 'К сожалению данные отсутствуют' });
-      return;
-    }
-    res.send(data);
-  });
-});
+cards.get('/cards', getCards);
+cards.post('/cards', postCard);
+cards.delete('/cards/:id', deleteCard);
 
 export default cards;
