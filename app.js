@@ -1,14 +1,12 @@
 /* eslint-disable import/extensions */
 import express from 'express';
 import mongoose from 'mongoose';
-import path from 'path';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-const __dirname = path.resolve();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -20,7 +18,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(express.json());
 app.use((req, res, next) => {
   req.user = {
-    _id: '6021555add1b183ce8df82ae'
+    _id: '6021555add1b183ce8df82ae',
   };
   next();
 });

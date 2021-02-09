@@ -1,6 +1,9 @@
+/* eslint-disable import/extensions */
 import express from 'express';
 
-import { getUsers, getUser, createUser, editProfile, editAvatar } from '../controllers/users.js';
+import {
+  getUsers, getUser, createUser, editProfile, editAvatar,
+} from '../controllers/users.js';
 
 export const users = express.Router();
 

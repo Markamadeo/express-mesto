@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator(avatar) {
         // eslint-disable-next-line no-useless-escape
-        return /^(https?:\/\/)?([\w\-\.]+)\.([a-z]{2,6}\.?)(\/[\w\W]*)*\/?$/.test(avatar);
+        return /^(https?:\/\/)([\w\-\.]+)\.([a-z]{2,6}\.?)(\/[\w\W]*)*\/?$/.test(avatar);
       },
       message: 'С вашей ссылкой что-то не так...',
     },
