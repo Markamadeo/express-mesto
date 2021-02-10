@@ -34,7 +34,6 @@ export const deleteCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      console.log(req.params.id);
       res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err));
     });
 };
