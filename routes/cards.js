@@ -1,6 +1,5 @@
 /* eslint-disable import/extensions */
 import express from 'express';
-
 import {
   getCards, postCard, deleteCard, likeCard, dislikeCard,
 } from '../controllers/cards.js';

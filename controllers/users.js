@@ -1,10 +1,13 @@
 /* eslint-disable import/extensions */
 import User from '../models/user.js';
+import {
+  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkResponseToNull, errMessage,
+} from '../utils/utils.js';
 
 export const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(500).send({ message: `На сервере произошла ошибка: ${err}` }));
+    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
 };
 
 export const createUser = (req, res) => {
@@ -14,24 +17,24 @@ export const createUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (Object.keys(req.body).length === 0) {
-        res.status(404).send({ message: 'Карточка или пользователь не найден' });
+      if (checkResponseToNull(req.body)) {
+        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
         return;
       }
-      res.status(400).send({ message: `Переданы некорректные данные в метод создания пользователя: ${err}` });
+      res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err));
     });
 };
 
 export const getUser = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      if (user === null) {
-        res.status(404).send({ message: 'Карточка или пользователь не найден' });
+      if (checkResponseToNull(user)) {
+        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
         return;
       }
       res.send({ data: user });
     })
-    .catch((err) => res.status(400).send({ message: `Переданы некорректные данные id: ${err}` }));
+    .catch(() => res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR)));
 };
 
 export const editProfile = (req, res) => {
@@ -42,12 +45,12 @@ export const editProfile = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(400).send({ message: `Переданы некорректные данные в метод редактирования пользователя: ${err}` }));
+    .catch((err) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err)));
 };
 
 export const editAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true, upsert: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Переданы некорректные данные в метод редактирования ссылки на аватар: ${err}` }));
+    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
 };

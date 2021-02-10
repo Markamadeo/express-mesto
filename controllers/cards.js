@@ -1,10 +1,13 @@
 /* eslint-disable import/extensions */
 import Card from '../models/card.js';
+import {
+  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkResponseToNull, errMessage,
+} from '../utils/utils.js';
 
 export const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: `На сервере произошла ошибка: ${err}` }));
+    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
 };
 
 export const postCard = (req, res) => {
@@ -13,18 +16,27 @@ export const postCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (Object.keys(req.body).length === 0) {
-        res.status(404).send({ message: 'Карточка или пользователь не найден' });
+      if (checkResponseToNull(req.body)) {
+        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
         return;
       }
-      res.status(400).send({ message: `Переданы некорректные данные в метод создания карточки: ${err}` });
+      res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err));
     });
 };
 
 export const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
-    .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(404).send({ message: `Переданы некорректные данные в метод создания карточки или пользователя: ${err}` }));
+    .then((card) => {
+      if (checkResponseToNull(card)) {
+        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
+        return;
+      }
+      res.send({ data: card });
+    })
+    .catch((err) => {
+      console.log(req.params.id);
+      res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err));
+    });
 };
 
 export const likeCard = (req, res) => {
@@ -33,8 +45,14 @@ export const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(400).send({ message: `Переданы некорректные данные в метод создания карточки или пользователя: ${err}` }));
+    .then((card) => {
+      if (checkResponseToNull(card)) {
+        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
+        return;
+      }
+      res.send({ data: card });
+    })
+    .catch((err) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err)));
 };
 
 export const dislikeCard = (req, res) => {
@@ -43,6 +61,12 @@ export const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(400).send({ message: `Переданы некорректные данные в метод создания карточки или пользователя: ${err}` }));
+    .then((card) => {
+      if (checkResponseToNull(card)) {
+        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
+        return;
+      }
+      res.send({ data: card });
+    })
+    .catch((err) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err)));
 };
